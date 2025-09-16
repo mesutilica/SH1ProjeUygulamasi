@@ -24,7 +24,8 @@ namespace SH1ProjeUygulamasi.WebUI.Areas.Admin.Controllers
         // GET: SlidersController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var model = _context.Sliders.Find(id);
+            return View(model);
         }
 
         // GET: SlidersController/Create
@@ -36,7 +37,7 @@ namespace SH1ProjeUygulamasi.WebUI.Areas.Admin.Controllers
         // POST: SlidersController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Slider collection, IFormFile Image)
+        public ActionResult Create(Slider collection, IFormFile? Image)
         {
             if (ModelState.IsValid)
             {
@@ -65,37 +66,55 @@ namespace SH1ProjeUygulamasi.WebUI.Areas.Admin.Controllers
         // GET: SlidersController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var model = _context.Sliders.Find(id);
+            return View(model);
         }
 
         // POST: SlidersController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Slider collection, IFormFile? Image)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    if (Image is not null)
+                    {
+                        string klasor = Directory.GetCurrentDirectory() + "/wwwroot/Images/";
+                        using var stream = new FileStream(klasor + Image.FileName, FileMode.Create);
+                        Image.CopyTo(stream);
+                        collection.Image = Image.FileName;
+                    }
+                    _context.Sliders.Update(collection);
+                    _context.SaveChanges();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch
+                {
+                    ModelState.AddModelError("", "Hata Oluştu!");
+                }
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(collection);
         }
 
         // GET: SlidersController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var model = _context.Sliders.Find(id);
+            return View(model);
         }
 
         // POST: SlidersController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Slider collection)
         {
             try
             {
+                _context.Sliders.Remove(collection);
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             catch

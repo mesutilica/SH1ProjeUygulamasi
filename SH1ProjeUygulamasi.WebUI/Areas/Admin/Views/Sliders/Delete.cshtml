@@ -1,11 +1,12 @@
 ﻿@model SH1ProjeUygulamasi.Core.Entities.Slider
 
 @{
-    ViewData["Title"] = "Slider Detay";
+    ViewData["Title"] = "Sil";
 }
 
-<h1>Slider Detay</h1>
+<h1>Sil</h1>
 
+<h3>Kaydı silmek istiyor musunuz?</h3>
 <div>
     <hr />
     <dl class="row">
@@ -31,8 +32,10 @@
             }
         </dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Düzenle</a> |
-    <a asp-action="Index">Listeye Dön</a>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Sil" class="btn btn-danger" /> |
+        <a asp-action="Index">Listeye Dön</a>
+    </form>
 </div>
