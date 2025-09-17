@@ -1,57 +1,56 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using SH1ProjeUygulamasi.Core.Entities;
 using SH1ProjeUygulamasi.Data;
+using SH1ProjeUygulamasi.WebUI.Tools;
 
 namespace SH1ProjeUygulamasi.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize]
-    public class SlidersController : Controller
+    public class ProductsController : Controller
     {
         private readonly DatabaseContext _context;
 
-        public SlidersController(DatabaseContext context)
+        public ProductsController(DatabaseContext context)
         {
             _context = context;
         }
 
-        // GET: SlidersController
+        // GET: ProductsController
         public ActionResult Index()
         {
-            return View(_context.Sliders);
+            // return View(_context.Products.Include("Category")); // 1. yol string olarak include etmek
+            return View(_context.Products.Include(p => p.Category)); // 2. yol lambda ile include etmek
         }
 
-        // GET: SlidersController/Details/5
+        // GET: ProductsController/Details/5
         public ActionResult Details(int id)
         {
-            var model = _context.Sliders.Find(id);
-            return View(model);
+            return View(_context.Products.Find(id));
         }
 
-        // GET: SlidersController/Create
+        // GET: ProductsController/Create
         public ActionResult Create()
         {
+            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name"); // dropdown için kategorileri getir
             return View();
         }
 
-        // POST: SlidersController/Create
+        // POST: ProductsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Slider collection, IFormFile? Image)
+        public ActionResult Create(Product collection, IFormFile? Image)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
                     if (Image is not null)
-                    {
-                        string klasor = Directory.GetCurrentDirectory() + "/wwwroot/Images/";
-                        using var stream = new FileStream(klasor + Image.FileName, FileMode.Create);
-                        Image.CopyTo(stream);
-                        collection.Image = Image.FileName;
-                    }
-                    _context.Sliders.Add(collection);
+                        collection.Image = FileHelper.FileLoader(Image);
+                    _context.Products.Add(collection);
                     _context.SaveChanges();
                     return RedirectToAction(nameof(Index));
                 }
@@ -60,34 +59,29 @@ namespace SH1ProjeUygulamasi.WebUI.Areas.Admin.Controllers
                     ModelState.AddModelError("", "Hata Oluştu!");
                 }
             }
-
+            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name");
             return View(collection);
         }
 
-        // GET: SlidersController/Edit/5
+        // GET: ProductsController/Edit/5
         public ActionResult Edit(int id)
         {
-            var model = _context.Sliders.Find(id);
-            return View(model);
+            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name");
+            return View(_context.Products.Find(id));
         }
 
-        // POST: SlidersController/Edit/5
+        // POST: ProductsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Slider collection, IFormFile? Image)
+        public ActionResult Edit(int id, Product collection, IFormFile? Image)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
                     if (Image is not null)
-                    {
-                        string klasor = Directory.GetCurrentDirectory() + "/wwwroot/Images/";
-                        using var stream = new FileStream(klasor + Image.FileName, FileMode.Create);
-                        Image.CopyTo(stream);
-                        collection.Image = Image.FileName;
-                    }
-                    _context.Sliders.Update(collection);
+                        collection.Image = FileHelper.FileLoader(Image);
+                    _context.Products.Update(collection);
                     _context.SaveChanges();
                     return RedirectToAction(nameof(Index));
                 }
@@ -96,25 +90,24 @@ namespace SH1ProjeUygulamasi.WebUI.Areas.Admin.Controllers
                     ModelState.AddModelError("", "Hata Oluştu!");
                 }
             }
-
+            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name");
             return View(collection);
         }
 
-        // GET: SlidersController/Delete/5
+        // GET: ProductsController/Delete/5
         public ActionResult Delete(int id)
         {
-            var model = _context.Sliders.Find(id);
-            return View(model);
+            return View(_context.Products.Find(id));
         }
 
-        // POST: SlidersController/Delete/5
+        // POST: ProductsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, Slider collection)
+        public ActionResult Delete(int id, Product collection)
         {
             try
             {
-                _context.Sliders.Remove(collection);
+                _context.Products.Remove(collection);
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
