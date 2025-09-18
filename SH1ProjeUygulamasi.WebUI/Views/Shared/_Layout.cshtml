@@ -21,25 +21,35 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Anasayfa</a>
                         </li>
+                        @await Component.InvokeAsync("Kategori")
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ContactUs">İletişim</a>
                         </li>
                     </ul>
                 </div>
+                @if (Context.User.Identity.IsAuthenticated)
+                {
+                    <a class="btn btn-danger" asp-controller="Account" asp-action="Logout">Oturumu Kapat</a>
+                }
+                else
+                {
+                    <a class="btn btn-primary" asp-controller="Account" asp-action="Login">Giriş Yap</a>
+                }
             </div>
         </nav>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            @Html.Raw(TempData["Message"])
             @RenderBody()
         </main>
     </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - SH1ProjeUygulamasi.WebUI - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - SH1ProjeUygulamasi.WebUI - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

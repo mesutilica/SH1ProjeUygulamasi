@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -34,20 +34,18 @@
                         </li>
                     </ul>
                 </div>
+                <a class="btn btn-outline-info me-2" href="/" target="_blank">Siteyi İncele</a>
+                <a class="btn btn-danger" asp-area="" asp-controller="Account" asp-action="Logout">Oturumu Kapat</a>
             </div>
         </nav>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            @Html.Raw(TempData["Message"])
             @RenderBody()
         </main>
     </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - SH1ProjeUygulamasi.WebUI - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
