@@ -38,6 +38,11 @@
                     <input class="form-check-input" asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
                 </label>
             </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsHome" /> @Html.DisplayNameFor(model => model.IsHome)
+                </label>
+            </div>
             <div class="form-group">
                 <label asp-for="Stock" class="control-label"></label>
                 <input asp-for="Stock" class="form-control" />

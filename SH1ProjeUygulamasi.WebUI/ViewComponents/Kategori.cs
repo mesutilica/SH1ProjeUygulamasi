@@ -14,7 +14,7 @@ namespace SH1ProjeUygulamasi.WebUI.ViewComponents
 
         public IViewComponentResult Invoke()
         {
-            return View(_context.Categories);
+            return View(_context.Categories.Where(c => c.IsActive));
         }
     }
 }

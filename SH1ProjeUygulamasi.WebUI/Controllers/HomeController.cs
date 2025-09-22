@@ -1,21 +1,27 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using SH1ProjeUygulamasi.Data;
 using SH1ProjeUygulamasi.WebUI.Models;
 
 namespace SH1ProjeUygulamasi.WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly DatabaseContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(DatabaseContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
-            return View();
+            var model = new HomePageViewModel
+            {
+                Sliders = _context.Sliders.ToList(),
+                Products = _context.Products.Where(p => p.IsActive && p.IsHome).ToList()
+            };
+            return View(model);
         }
 
         public IActionResult Privacy()
