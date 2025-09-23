@@ -29,14 +29,9 @@
         <span class="visually-hidden">Next</span>
     </button>
 </div>
+
 <h1 class="display-4 text-center mt-5">
     Ürünlerimiz
 </h1>
-<div class="row row-cols-3">
-    @foreach (var item in Model.Products)
-    {
-        <div class="col">
-            <img src="/Images/@item.Image" alt="Alternate Text" class="img-fluid" />
-        </div>
-    }
-</div>
+
+<partial name="_Products" model="Model.Products" />
