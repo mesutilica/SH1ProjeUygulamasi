@@ -33,6 +33,11 @@ namespace SH1ProjeUygulamasi.WebUI.Controllers
         {
             return View();
         }
+        [HttpPost]
+        public IActionResult ContactUs(string nameSurname, string email, string message)
+        {
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
