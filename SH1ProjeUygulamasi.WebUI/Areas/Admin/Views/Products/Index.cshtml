@@ -50,7 +50,9 @@
                     @Html.DisplayFor(modelItem => item.CreateDate)
                 </td>
                 <td>
-                    <img src="/Images/@item.Image" alt="@item.Image" height="34" />
+                    <a href="/Images/@item.Image" title="@item.Image">
+                        <img src="/Images/@item.Image" alt="@item.Image" height="34" />
+                    </a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.IsActive)
