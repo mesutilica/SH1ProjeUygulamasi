@@ -19,12 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SH1ProjeUygulamasi.Data\SH1ProjeUygulamasi.Data.csproj" />
+    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="wwwroot\Images\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="wwwroot\Images\" />
+    <ProjectReference Include="..\SH1ProjeUygulamasi.Service\SH1ProjeUygulamasi.Service.csproj" />
   </ItemGroup>
 
 </Project>
