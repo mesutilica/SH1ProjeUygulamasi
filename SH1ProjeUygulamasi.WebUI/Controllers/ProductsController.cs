@@ -25,9 +25,17 @@ namespace SH1ProjeUygulamasi.WebUI.Controllers
             var model = _productService.GetProducts(p => p.IsActive && p.Name.Contains(q));
             return View(model);
         }
-        public IActionResult Detail(int id)
+        public IActionResult Detail(int? id)
         {
-            var model = _productService.GetProductByCategory(id); // _context.Products.FirstOrDefault(p => p.IsActive && p.Id == id);
+            if (id is null)
+            {
+                return BadRequest("Geçersiz İstek!");
+            }
+            var model = _productService.GetProductByCategoryAndProductImages(id.Value); // _context.Products.FirstOrDefault(p => p.IsActive && p.Id == id);
+            if (model == null)
+            {
+                return NotFound("Ürün Bulunamadı!");
+            }
             return View(model);
         }
     }

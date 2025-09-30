@@ -32,6 +32,9 @@
                 </td>
                 <td>
                     @item.Product.Name
+                    <a href="/Products/Detail/@item.ProductId" class="btn btn-outline-primary" title="Ürün Sayfasını Gör" target="_blank">
+                        <i class="bi bi-search"></i>
+                    </a>
                 </td>
                 <td>
                     <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.Id">Düzenle</a> |
