@@ -1,7 +1,8 @@
-using SH1ProjeUygulamasi.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using SH1ProjeUygulamasi.Data;
 using SH1ProjeUygulamasi.Service.Abstract;
 using SH1ProjeUygulamasi.Service.Concrete;
+using System.Security.Claims;
 
 namespace SH1ProjeUygulamasi.WebUI
 {
@@ -25,7 +26,17 @@ namespace SH1ProjeUygulamasi.WebUI
 
             builder.Services.AddScoped<IUserService, UserService>();
 
+            builder.Services.AddScoped(typeof(IService<>), typeof(Service<>)); // Generic Servis
+
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+
+            // Authorization : Yetkilendirme : once servis olarak ekliyoruz
+            builder.Services.AddAuthorization(x =>
+            {
+                x.AddPolicy("AdminPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "Admin")); // Bundan sonra Controller lara Policy i belirtmeliyiz..
+                x.AddPolicy("UserPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "Admin", "User"));
+            });
+
 
             var app = builder.Build();
 

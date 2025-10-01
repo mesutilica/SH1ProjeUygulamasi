@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using SH1ProjeUygulamasi.Core.Entities;
 using SH1ProjeUygulamasi.Data;
+using SH1ProjeUygulamasi.Service.Abstract;
 using SH1ProjeUygulamasi.WebUI.Models;
 using SH1ProjeUygulamasi.WebUI.Tools;
 using System.Diagnostics;
@@ -8,19 +10,27 @@ namespace SH1ProjeUygulamasi.WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly DatabaseContext _context;
+        //private readonly DatabaseContext _context;
 
-        public HomeController(DatabaseContext context)
+        //public HomeController(DatabaseContext context)
+        //{
+        //    _context = context;
+        //}
+        private readonly IService<Slider> _serviceSlider; // generic servis kullanýmý
+        private readonly IProductService _productService;
+
+        public HomeController(IService<Slider> serviceSlider, IProductService productService)
         {
-            _context = context;
+            _serviceSlider = serviceSlider;
+            _productService = productService;
         }
 
         public IActionResult Index()
         {
             var model = new HomePageViewModel
             {
-                Sliders = _context.Sliders.ToList(),
-                Products = _context.Products.Where(p => p.IsActive && p.IsHome).ToList()
+                Sliders = _serviceSlider.GetAll(), // _context.Sliders.ToList(),
+                Products = _productService.GetProducts(p => p.IsActive && p.IsHome) // _context.Products.Where(p => p.IsActive && p.IsHome).ToList()
             };
             return View(model);
         }

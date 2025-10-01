@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using SH1ProjeUygulamasi.Core.Entities;
-using SH1ProjeUygulamasi.Data;
 using SH1ProjeUygulamasi.Service.Abstract;
-using SH1ProjeUygulamasi.Service.Concrete;
 using System.Security.Claims;
 
 namespace SH1ProjeUygulamasi.WebUI.Controllers
@@ -40,7 +38,7 @@ namespace SH1ProjeUygulamasi.WebUI.Controllers
                 var haklar = new List<Claim>() // kullanıcı hakları tanımladık
                     {
                         new(ClaimTypes.Email, kullanici.Email), // claim = hak(kullanıcıya tanımlalan haklar)
-                        new(ClaimTypes.Role, "Admin")
+                        new(ClaimTypes.Role, kullanici.IsAdmin ? "Admin" : "User") // giriş yapan kullanıcı admin ise admin yetkisiyle değilse user yetkisiyle giriş yasın.
                     };
                 var kullaniciKimligi = new ClaimsIdentity(haklar, "Login"); // kullanıcı için bir kimlik oluşturduk
                 ClaimsPrincipal claimsPrincipal = new(kullaniciKimligi);
@@ -53,6 +51,10 @@ namespace SH1ProjeUygulamasi.WebUI.Controllers
         {
             HttpContext.SignOutAsync(); // çıkış yap
             return RedirectToAction("Index", "Home");
+        }
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
         public IActionResult Register()
         {

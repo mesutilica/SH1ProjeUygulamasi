@@ -7,7 +7,8 @@ using SH1ProjeUygulamasi.WebUI.Tools;
 namespace SH1ProjeUygulamasi.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    // [Authorize] // düz kullanım
+    [Authorize(Policy = "AdminPolicy")] // Rol yetkilendirmeli kullanım : sadece admin yetkisi ile giriş yapanlar bu ekranlara erişsin.
     public class CategoriesController : Controller
     {
         private readonly DatabaseContext _context;

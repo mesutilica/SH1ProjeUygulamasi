@@ -7,7 +7,7 @@ using SH1ProjeUygulamasi.Data;
 namespace SH1ProjeUygulamasi.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [Authorize(Policy = "AdminPolicy")]
     public class UsersController : Controller
     {
         private readonly DatabaseContext _context;

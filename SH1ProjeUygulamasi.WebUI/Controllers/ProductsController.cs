@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SH1ProjeUygulamasi.Data;
 using SH1ProjeUygulamasi.Service.Abstract;
-using SH1ProjeUygulamasi.Service.Concrete;
 
 namespace SH1ProjeUygulamasi.WebUI.Controllers
 {

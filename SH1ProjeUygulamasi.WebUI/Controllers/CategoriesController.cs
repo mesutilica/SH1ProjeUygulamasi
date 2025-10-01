@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SH1ProjeUygulamasi.Data;
 using SH1ProjeUygulamasi.Service.Abstract;
 
 namespace SH1ProjeUygulamasi.WebUI.Controllers
