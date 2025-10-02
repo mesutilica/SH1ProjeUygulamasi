@@ -1,0 +1,6 @@
+@SH1ProjeUygulamasi.WebAPI_HostAddress = http://localhost:5018
+
+GET {{SH1ProjeUygulamasi.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
