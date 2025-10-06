@@ -2,7 +2,7 @@
 
 namespace SH1ProjeUygulamasi.Core.Entities
 {
-    public class ProductImage
+    public class ProductImage : IEntity
     {
         public int Id { get; set; }
         [Display(Name = "Ürün")]

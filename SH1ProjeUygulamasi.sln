@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SH1ProjeUygulamasi.Service"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SH1ProjeUygulamasi.WebAPI", "SH1ProjeUygulamasi.WebAPI\SH1ProjeUygulamasi.WebAPI.csproj", "{0349749C-6862-42B3-93BC-C7CC169D8A36}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SH1ProjeUygulamasi.WebAPIUsing", "SH1ProjeUygulamasi.WebAPIUsing\SH1ProjeUygulamasi.WebAPIUsing.csproj", "{005EDE78-26D1-4BAB-925B-125C2D37FC3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{0349749C-6862-42B3-93BC-C7CC169D8A36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0349749C-6862-42B3-93BC-C7CC169D8A36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0349749C-6862-42B3-93BC-C7CC169D8A36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{005EDE78-26D1-4BAB-925B-125C2D37FC3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{005EDE78-26D1-4BAB-925B-125C2D37FC3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{005EDE78-26D1-4BAB-925B-125C2D37FC3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{005EDE78-26D1-4BAB-925B-125C2D37FC3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

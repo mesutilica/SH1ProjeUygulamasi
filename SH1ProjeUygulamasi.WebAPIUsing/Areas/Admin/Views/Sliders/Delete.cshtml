@@ -1,0 +1,41 @@
+﻿@model SH1ProjeUygulamasi.Core.Entities.Slider
+
+@{
+    ViewData["Title"] = "Sil";
+}
+
+<h1>Sil</h1>
+
+<h3>Kaydı silmek istiyor musunuz?</h3>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Image)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Image is not null)
+            {
+                <img src="~/Images/@Model.Image" height="118" />
+            }
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Sil" class="btn btn-danger" /> |
+        <a asp-action="Index">Listeye Dön</a>
+    </form>
+</div>
