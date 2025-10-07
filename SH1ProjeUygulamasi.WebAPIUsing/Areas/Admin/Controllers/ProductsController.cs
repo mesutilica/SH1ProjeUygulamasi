@@ -1,40 +1,45 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SH1ProjeUygulamasi.Core.Entities;
-using System.Threading.Tasks;
 
 namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class CategoriesController : Controller
+    public class ProductsController : Controller
     {
-        static string _apiAdres = "http://localhost:5018/Api/Categories";
-        HttpClient _httpClient = new HttpClient(); // .net framework deki yapıyı kullanarak
+        private readonly HttpClient _httpClient;
+        static string _apiAdres = "http://localhost:5018/Api/Products";
+        static string _apiAdres2 = "http://localhost:5018/Api/Categories";
+        public ProductsController(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
 
-        // GET: CategoriesController
+        // GET: ProductsController
         public async Task<ActionResult> Index()
         {
-            var model = await _httpClient.GetFromJsonAsync<List<Category>>(_apiAdres);
+            var model = await _httpClient.GetFromJsonAsync<List<Product>>(_apiAdres);
             return View(model);
         }
 
-        // GET: CategoriesController/Details/5
+        // GET: ProductsController/Details/5
         public async Task<ActionResult> DetailsAsync(int id)
         {
-            var model = await _httpClient.GetFromJsonAsync<Category>($"{_apiAdres}/{id}");
+            var model = await _httpClient.GetFromJsonAsync<Product>($"{_apiAdres}/{id}");
             return View(model);
         }
 
-        // GET: CategoriesController/Create
-        public ActionResult Create()
+        // GET: ProductsController/Create
+        public async Task<ActionResult> CreateAsync()
         {
+            await YukleAsync();
             return View();
         }
 
-        // POST: CategoriesController/Create
+        // POST: ProductsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateAsync(Category collection)
+        public async Task<ActionResult> CreateAsync(Product collection)
         {
             if (ModelState.IsValid)
             {
@@ -52,20 +57,23 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
                     ModelState.AddModelError("", "Hata Oluştu!");
                 }
             }
+            await YukleAsync();
             return View(collection);
         }
 
-        // GET: CategoriesController/Edit/5
+        // GET: ProductsController/Edit/5
         public async Task<ActionResult> EditAsync(int id)
         {
-            var model = await _httpClient.GetFromJsonAsync<Category>($"{_apiAdres}/{id}");
+            await YukleAsync();
+
+            var model = await _httpClient.GetFromJsonAsync<Product>($"{_apiAdres}/{id}");
             return View(model);
         }
 
-        // POST: CategoriesController/Edit/5
+        // POST: ProductsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditAsync(int id, Category collection)
+        public async Task<ActionResult> EditAsync(int id, Product collection)
         {
             if (ModelState.IsValid)
             {
@@ -83,20 +91,21 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
                     ModelState.AddModelError("", "Hata Oluştu!");
                 }
             }
+            await YukleAsync();
             return View(collection);
         }
 
-        // GET: CategoriesController/Delete/5
+        // GET: ProductsController/Delete/5
         public async Task<ActionResult> DeleteAsync(int id)
         {
-            var model = await _httpClient.GetFromJsonAsync<Category>($"{_apiAdres}/{id}");
+            var model = await _httpClient.GetFromJsonAsync<Product>($"{_apiAdres}/{id}");
             return View(model);
         }
 
-        // POST: CategoriesController/Delete/5
+        // POST: ProductsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteAsync(int id, Category collection)
+        public async Task<ActionResult> DeleteAsync(int id, Product collection)
         {
             try
             {
@@ -112,6 +121,11 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
                 ModelState.AddModelError("", "Hata Oluştu!");
             }
             return View(collection);
+        }
+        async Task YukleAsync()
+        {
+            var kategoriler = await _httpClient.GetFromJsonAsync<List<Category>>(_apiAdres2);
+            ViewBag.CategoryId = new SelectList(kategoriler, "Id", "Name");
         }
     }
 }

@@ -1,40 +1,51 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SH1ProjeUygulamasi.Core.Entities;
-using System.Threading.Tasks;
 
 namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class CategoriesController : Controller
+    public class ProductImagesController : Controller
     {
-        static string _apiAdres = "http://localhost:5018/Api/Categories";
-        HttpClient _httpClient = new HttpClient(); // .net framework deki yapıyı kullanarak
+        private readonly HttpClient _httpClient;
 
-        // GET: CategoriesController
+        static string _apiAdres = "http://localhost:5018/Api/ProductImages";
+        static string _apiAdres2 = "http://localhost:5018/Api/Products";
+        public ProductImagesController(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
+        async Task YukleAsync()
+        {
+            var liste = await _httpClient.GetFromJsonAsync<List<Product>>(_apiAdres2);
+            ViewBag.ProductId = new SelectList(liste, "Id", "Name");
+        }
+
+        // GET: ProductImagesController
         public async Task<ActionResult> Index()
         {
-            var model = await _httpClient.GetFromJsonAsync<List<Category>>(_apiAdres);
+            var model = await _httpClient.GetFromJsonAsync<List<ProductImage>>(_apiAdres);
             return View(model);
         }
 
-        // GET: CategoriesController/Details/5
+        // GET: ProductImagesController/Details/5
         public async Task<ActionResult> DetailsAsync(int id)
         {
-            var model = await _httpClient.GetFromJsonAsync<Category>($"{_apiAdres}/{id}");
+            var model = await _httpClient.GetFromJsonAsync<ProductImage>($"{_apiAdres}/{id}");
             return View(model);
         }
 
-        // GET: CategoriesController/Create
-        public ActionResult Create()
+        // GET: ProductImagesController/Create
+        public async Task<ActionResult> Create()
         {
+            await YukleAsync();
             return View();
         }
 
-        // POST: CategoriesController/Create
+        // POST: ProductImagesController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateAsync(Category collection)
+        public async Task<ActionResult> CreateAsync(ProductImage collection)
         {
             if (ModelState.IsValid)
             {
@@ -52,20 +63,22 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
                     ModelState.AddModelError("", "Hata Oluştu!");
                 }
             }
+            await YukleAsync();
             return View(collection);
         }
 
-        // GET: CategoriesController/Edit/5
+        // GET: ProductImagesController/Edit/5
         public async Task<ActionResult> EditAsync(int id)
         {
-            var model = await _httpClient.GetFromJsonAsync<Category>($"{_apiAdres}/{id}");
+            await YukleAsync();
+            var model = await _httpClient.GetFromJsonAsync<ProductImage>($"{_apiAdres}/{id}");
             return View(model);
         }
 
-        // POST: CategoriesController/Edit/5
+        // POST: ProductImagesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditAsync(int id, Category collection)
+        public async Task<ActionResult> EditAsync(int id, ProductImage collection)
         {
             if (ModelState.IsValid)
             {
@@ -83,20 +96,21 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
                     ModelState.AddModelError("", "Hata Oluştu!");
                 }
             }
+            await YukleAsync();
             return View(collection);
         }
 
-        // GET: CategoriesController/Delete/5
+        // GET: ProductImagesController/Delete/5
         public async Task<ActionResult> DeleteAsync(int id)
         {
-            var model = await _httpClient.GetFromJsonAsync<Category>($"{_apiAdres}/{id}");
+            var model = await _httpClient.GetFromJsonAsync<ProductImage>($"{_apiAdres}/{id}");
             return View(model);
         }
 
-        // POST: CategoriesController/Delete/5
+        // POST: ProductImagesController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteAsync(int id, Category collection)
+        public async Task<ActionResult> DeleteAsync(int id, ProductImage collection)
         {
             try
             {

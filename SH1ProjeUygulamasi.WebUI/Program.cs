@@ -15,6 +15,8 @@ namespace SH1ProjeUygulamasi.WebUI
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddSession();
+
             builder.Services.AddDbContext<DatabaseContext>();
 
             builder.Services.AddScoped<ICategoryService, CategoryService>(); // Uygulamaya ICategoryService i kullanma isteði gelirse CategoryService sýnýfýndan bir nesne oluþtur ve onu kullan.
@@ -37,7 +39,6 @@ namespace SH1ProjeUygulamasi.WebUI
                 x.AddPolicy("UserPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "Admin", "User"));
             });
 
-
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -47,6 +48,8 @@ namespace SH1ProjeUygulamasi.WebUI
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseSession();
 
             app.UseHttpsRedirection();
             app.UseRouting();

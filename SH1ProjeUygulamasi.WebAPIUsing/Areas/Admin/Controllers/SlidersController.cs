@@ -1,40 +1,44 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SH1ProjeUygulamasi.Core.Entities;
-using System.Threading.Tasks;
 
 namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class CategoriesController : Controller
+    public class SlidersController : Controller
     {
-        static string _apiAdres = "http://localhost:5018/Api/Categories";
-        HttpClient _httpClient = new HttpClient(); // .net framework deki yapıyı kullanarak
+        private readonly HttpClient _httpClient;
 
-        // GET: CategoriesController
+        static string _apiAdres = "http://localhost:5018/Api/Sliders";
+        public SlidersController(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
+
+        // GET: SlidersController
         public async Task<ActionResult> Index()
         {
-            var model = await _httpClient.GetFromJsonAsync<List<Category>>(_apiAdres);
+            var model = await _httpClient.GetFromJsonAsync<List<Slider>>(_apiAdres);
             return View(model);
         }
 
-        // GET: CategoriesController/Details/5
+        // GET: SlidersController/Details/5
         public async Task<ActionResult> DetailsAsync(int id)
         {
-            var model = await _httpClient.GetFromJsonAsync<Category>($"{_apiAdres}/{id}");
+            var model = await _httpClient.GetFromJsonAsync<Slider>($"{_apiAdres}/{id}");
             return View(model);
         }
 
-        // GET: CategoriesController/Create
+        // GET: SlidersController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: CategoriesController/Create
+        // POST: SlidersController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateAsync(Category collection)
+        public async Task<ActionResult> CreateAsync(Slider collection)
         {
             if (ModelState.IsValid)
             {
@@ -55,17 +59,17 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
             return View(collection);
         }
 
-        // GET: CategoriesController/Edit/5
+        // GET: SlidersController/Edit/5
         public async Task<ActionResult> EditAsync(int id)
         {
-            var model = await _httpClient.GetFromJsonAsync<Category>($"{_apiAdres}/{id}");
+            var model = await _httpClient.GetFromJsonAsync<Slider>($"{_apiAdres}/{id}");
             return View(model);
         }
 
-        // POST: CategoriesController/Edit/5
+        // POST: SlidersController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditAsync(int id, Category collection)
+        public async Task<ActionResult> EditAsync(int id, Slider collection)
         {
             if (ModelState.IsValid)
             {
@@ -86,17 +90,17 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
             return View(collection);
         }
 
-        // GET: CategoriesController/Delete/5
+        // GET: SlidersController/Delete/5
         public async Task<ActionResult> DeleteAsync(int id)
         {
-            var model = await _httpClient.GetFromJsonAsync<Category>($"{_apiAdres}/{id}");
+            var model = await _httpClient.GetFromJsonAsync<Slider>($"{_apiAdres}/{id}");
             return View(model);
         }
 
-        // POST: CategoriesController/Delete/5
+        // POST: SlidersController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteAsync(int id, Category collection)
+        public async Task<ActionResult> DeleteAsync(int id, Slider collection)
         {
             try
             {
