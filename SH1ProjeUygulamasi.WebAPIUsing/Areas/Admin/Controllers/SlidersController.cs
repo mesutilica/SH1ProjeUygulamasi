@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SH1ProjeUygulamasi.Core.Entities;
+using SH1ProjeUygulamasi.WebAPIUsing.Tools;
 
 namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
 {
@@ -38,12 +39,14 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
         // POST: SlidersController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateAsync(Slider collection)
+        public async Task<ActionResult> CreateAsync(Slider collection, IFormFile? Image)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    if (Image is not null)
+                        collection.Image = FileHelper.FileLoader(Image);
                     var response = await _httpClient.PostAsJsonAsync(_apiAdres, collection);
                     if (response.IsSuccessStatusCode)
                     {
@@ -69,12 +72,14 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
         // POST: SlidersController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditAsync(int id, Slider collection)
+        public async Task<ActionResult> EditAsync(int id, Slider collection, IFormFile? Image)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    if (Image is not null)
+                        collection.Image = FileHelper.FileLoader(Image);
                     var response = await _httpClient.PutAsJsonAsync(_apiAdres + "/" + id, collection);
                     if (response.IsSuccessStatusCode)
                     {
@@ -107,6 +112,8 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
                 var response = await _httpClient.DeleteAsync($"{_apiAdres}/{id}");
                 if (response.IsSuccessStatusCode)
                 {
+                    if (!string.IsNullOrEmpty(collection.Image))
+                        FileHelper.FileRemover(collection.Image);
                     return RedirectToAction(nameof(Index));
                 }
                 ModelState.AddModelError("", "Kayıt Başarısız!");

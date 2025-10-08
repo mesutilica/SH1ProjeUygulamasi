@@ -4,11 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using SH1ProjeUygulamasi.Core.Entities;
 using SH1ProjeUygulamasi.Data;
 using SH1ProjeUygulamasi.WebUI.Tools;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace SH1ProjeUygulamasi.WebUI.Areas.Admin.Controllers
 {

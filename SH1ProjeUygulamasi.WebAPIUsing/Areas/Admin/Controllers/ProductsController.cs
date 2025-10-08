@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SH1ProjeUygulamasi.Core.Entities;
+using SH1ProjeUygulamasi.WebAPIUsing.Tools;
 
 namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
 {
@@ -39,12 +40,14 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
         // POST: ProductsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateAsync(Product collection)
+        public async Task<ActionResult> CreateAsync(Product collection, IFormFile? Image)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    if (Image is not null)
+                        collection.Image = FileHelper.FileLoader(Image);
                     var response = await _httpClient.PostAsJsonAsync(_apiAdres, collection);
                     if (response.IsSuccessStatusCode)
                     {
@@ -73,12 +76,20 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
         // POST: ProductsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditAsync(int id, Product collection)
+        public async Task<ActionResult> EditAsync(int id, Product collection, IFormFile? Image, bool resmiSil)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    if (resmiSil == true)
+                    {
+                        if (!string.IsNullOrEmpty(collection.Image))
+                            FileHelper.FileRemover(collection.Image);
+                        collection.Image = string.Empty;
+                    }
+                    if (Image is not null)
+                        collection.Image = FileHelper.FileLoader(Image);
                     var response = await _httpClient.PutAsJsonAsync(_apiAdres + "/" + id, collection);
                     if (response.IsSuccessStatusCode)
                     {
@@ -112,6 +123,8 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
                 var response = await _httpClient.DeleteAsync($"{_apiAdres}/{id}");
                 if (response.IsSuccessStatusCode)
                 {
+                    if (!string.IsNullOrEmpty(collection.Image))
+                        FileHelper.FileRemover(collection.Image);
                     return RedirectToAction(nameof(Index));
                 }
                 ModelState.AddModelError("", "Kayıt Başarısız!");
