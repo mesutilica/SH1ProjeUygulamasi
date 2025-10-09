@@ -22,6 +22,24 @@ namespace SH1ProjeUygulamasi.WebAPI.Controllers
             return await _service.GetAllAsync();
         }
 
+        [HttpGet("GetHomePageProducts")]
+        public async Task<IEnumerable<Product>> GetHomePageProducts()
+        {
+            return await _service.GetAllAsync(p => p.IsActive && p.IsHome);
+        }
+
+        [HttpGet("GetProductsByCategoryId/{id}")]
+        public async Task<IEnumerable<Product>> GetProductsByCategoryId(int id)
+        {
+            return await _service.GetAllAsync(p => p.IsActive && p.CategoryId == id);
+        }
+
+        [HttpGet("GetProductsBySearch/{id?}")]
+        public async Task<IEnumerable<Product>> GetProductsBySearch(string id = "")
+        {
+            return await _service.GetAllAsync(p => p.IsActive && p.Name.Contains(id));
+        }
+
         // GET api/<ProductsController>/5
         [HttpGet("{id}")]
         public async Task<Product> GetAsync(int id)

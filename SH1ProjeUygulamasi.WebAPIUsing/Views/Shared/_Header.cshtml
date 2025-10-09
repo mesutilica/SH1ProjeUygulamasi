@@ -1,0 +1,40 @@
+﻿<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SH1ProjeUygulamasi.WebUI</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-around">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Anasayfa</a>
+                    </li>
+                    @await Component.InvokeAsync("Kategori")
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Home" asp-action="ContactUs">İletişim</a>
+                    </li>
+                </ul>
+
+                <form action="/Products" method="get" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                    <input type="search" name="q" class="form-control" placeholder="Ara..." aria-label="Search">
+                </form>
+
+            </div>
+            @if (Context.User.Identity.IsAuthenticated)
+            {
+                <a class="btn btn-danger" asp-controller="Account" asp-action="Logout">Oturumu Kapat <i class="bi bi-power"></i></a>
+                if (Context.User.IsInRole("Admin"))
+                {
+                    <a class="btn btn-outline-dark ms-3" href="/Admin">Yönetim Paneli <i class="bi bi-search"></i></a>
+                }
+            }
+            else
+            {
+                <a class="btn btn-primary" asp-controller="Account" asp-action="Login">Giriş Yap <i class="bi bi-person-check"></i></a>
+                <a class="btn btn-success ms-3" asp-controller="Account" asp-action="Register">Kayıt Ol <i class="bi bi-person-fill-add"></i></a>
+            }
+        </div>
+    </nav>
+</header>
