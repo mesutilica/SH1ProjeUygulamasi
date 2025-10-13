@@ -1,11 +1,22 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using SH1ProjeUygulamasi.Core.Entities;
+using SH1ProjeUygulamasi.Core.Models;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SH1ProjeUygulamasi.WebAPIUsing.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly HttpClient _httpClient;
+
+        public AccountController(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
+
+        static string _apiAdres = "http://localhost:5018/Api/Auth/";
         public IActionResult Index()
         {
             return View();
@@ -15,9 +26,33 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Login(string email, string password)
+        public async Task<IActionResult> Login(UserLoginModel userLoginModel)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                var sonuc = await _httpClient.PostAsJsonAsync(_apiAdres + "Login", userLoginModel);
+                if (sonuc.IsSuccessStatusCode)
+                {
+                    var kullanici = await sonuc.Content.ReadFromJsonAsync<User>();
+
+                    var haklar = new List<Claim>() // kullanıcı hakları tanımladık
+                    {
+                        new(ClaimTypes.Email, kullanici.Email),
+                        new(ClaimTypes.Role, kullanici.IsAdmin ? "Admin" : "User")
+                    };
+                    var kullaniciKimligi = new ClaimsIdentity(haklar, "Login");
+                    ClaimsPrincipal claimsPrincipal = new(kullaniciKimligi);
+                    await HttpContext.SignInAsync(claimsPrincipal);
+
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Giriş Başarısız!");
+                }
+            }
+
+            return View(userLoginModel);
         }
         public IActionResult Logout()
         {
@@ -33,7 +68,7 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Register(User user)
+        public async Task<IActionResult> RegisterAsync(User user)
         {
             if (ModelState.IsValid)
             {
@@ -41,15 +76,17 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Controllers
                 {
                     user.IsActive = true;
                     user.IsAdmin = false;
-                    //_context.Users.Add(user);
-                    //_context.SaveChanges();
-                    //_userService.AddUser(user);
-                    //_userService.Save();
-                    TempData["Message"] = @"<div class=""alert alert-success alert-dismissible fade show"" role=""alert"">
+                    user.CreateDate = DateTime.Now;
+                    var sonuc = await _httpClient.PostAsJsonAsync(_apiAdres + "Register", user);
+                    if (sonuc.IsSuccessStatusCode)
+                    {
+                        TempData["Message"] = @"<div class=""alert alert-success alert-dismissible fade show"" role=""alert"">
   <strong>Kayıt işlemi başarılı! Giriş yapabilirsiniz.</strong> 
   <button type=""button"" class=""btn-close"" data-bs-dismiss=""alert"" aria-label=""Close""></button>
 </div> ";
-                    return RedirectToAction("Login", "Account");
+                        return RedirectToAction("Login", "Account");
+                    }
+                    ModelState.AddModelError("", "Kayıt başarısız oldu!");
                 }
                 catch (Exception)
                 {

@@ -27,7 +27,7 @@
                 <a class="btn btn-danger" asp-controller="Account" asp-action="Logout">Oturumu Kapat <i class="bi bi-power"></i></a>
                 if (Context.User.IsInRole("Admin"))
                 {
-                    <a class="btn btn-outline-dark ms-3" href="/Admin">Yönetim Paneli <i class="bi bi-search"></i></a>
+                    <a class="btn btn-outline-dark ms-3" href="/Admin" target="_blank">Yönetim Paneli <i class="bi bi-search"></i></a>
                 }
             }
             else
