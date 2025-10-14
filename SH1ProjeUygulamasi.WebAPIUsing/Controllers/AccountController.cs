@@ -68,7 +68,7 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> RegisterAsync(User user)
+        public async Task<IActionResult> Register(User user)
         {
             if (ModelState.IsValid)
             {

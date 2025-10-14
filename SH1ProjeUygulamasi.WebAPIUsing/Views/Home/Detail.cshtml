@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewData["Title"] = "Ürün Detay Sayfası";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div id="images" class="row row-cols-2"></div>
+    </div>
+    <div id="detail" class="col-md-4"></div>
+</div>
+
+@section scripts{ 
+    <script>
+        let images = document.getElementById('images');
+        let div = document.getElementById('detail');
+        fetch('https://dummyjson.com/products/' + @Context.GetRouteValue("id"))
+            .then(response => response.json())
+            .then(product => {
+                console.log(product);
+                const resimler = product.images;
+            })
+    </script>
+}

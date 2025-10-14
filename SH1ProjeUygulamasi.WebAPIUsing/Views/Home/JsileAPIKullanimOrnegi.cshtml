@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewData["Title"] = "Js ile API Kullanim Ornegi";
+}
+
+<h1>Js ile API Kullanim Ornegi</h1>
+
+<div id="products" class="row row-cols-3"></div>
+
+@section scripts{
+    <script>
+        fetch('https://dummyjson.com/products/')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.products);
+                let div = document.getElementById('products'); // Ekrandaki div elementini seç
+                // Ürünleri div içine yazdır. ` eğik tırnak için klavyeden altgr + virgül + boşluk tuşuna bas
+                data.products.forEach(product => {
+                    div.innerHTML += `<div><a href="/Home/Detail/${product.id}"><img src="${product.thumbnail}" alt="" class="img-fluid" /></a><h5>${product.title} - ${product.price} ₺</h5></div>`;
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    </script>
+}
