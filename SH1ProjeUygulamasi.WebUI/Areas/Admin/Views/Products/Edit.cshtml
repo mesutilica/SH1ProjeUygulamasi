@@ -61,6 +61,10 @@
                 <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId"></select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="BrandId" class="control-label"></label>
+                <select asp-for="BrandId" class="form-select" asp-items="ViewBag.BrandId"></select>
+            </div>
             <div class="form-group mt-2">
                 <input type="submit" value="Kaydet" class="btn btn-primary" />
             </div>

@@ -32,10 +32,16 @@ namespace SH1ProjeUygulamasi.WebUI.Areas.Admin.Controllers
             return View(_context.Products.Find(id));
         }
 
+        void Load()
+        {
+            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name"); // dropdown için kategorileri getir
+            ViewBag.BrandId = new SelectList(_context.Brands, "Id", "Name");
+        }
+
         // GET: ProductsController/Create
         public ActionResult Create()
         {
-            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name"); // dropdown için kategorileri getir
+            Load();
             return View();
         }
 
@@ -59,14 +65,14 @@ namespace SH1ProjeUygulamasi.WebUI.Areas.Admin.Controllers
                     ModelState.AddModelError("", "Hata Oluştu!");
                 }
             }
-            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name");
+            Load();
             return View(collection);
         }
 
         // GET: ProductsController/Edit/5
         public ActionResult Edit(int id)
         {
-            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name");
+            Load();
             return View(_context.Products.Find(id));
         }
 
@@ -95,7 +101,7 @@ namespace SH1ProjeUygulamasi.WebUI.Areas.Admin.Controllers
                     ModelState.AddModelError("", "Hata Oluştu!");
                 }
             }
-            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name");
+            Load();
             return View(collection);
         }
 

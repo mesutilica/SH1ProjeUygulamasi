@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using SH1ProjeUygulamasi.Core.Entities;
 using SH1ProjeUygulamasi.WebAPIUsing.Tools;
 
@@ -8,48 +7,41 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Policy = "AdminPolicy")]
-    public class ProductsController : Controller
+    public class BrandsController : Controller
     {
-        private readonly HttpClient _httpClient;
-        static string _apiAdres = "http://localhost:5018/Api/Products";
-        static string _apiAdres2 = "http://localhost:5018/Api/Categories";
-        public ProductsController(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
-
-        // GET: ProductsController
+        static string _apiAdres = "http://localhost:5018/Api/Brands";
+        HttpClient _httpClient = new HttpClient();
+        // GET: BrandsController
         public async Task<ActionResult> Index()
         {
-            var model = await _httpClient.GetFromJsonAsync<List<Product>>(_apiAdres);
+            var model = await _httpClient.GetFromJsonAsync<List<Brand>>(_apiAdres);
             return View(model);
         }
 
-        // GET: ProductsController/Details/5
+        // GET: BrandsController/Details/5
         public async Task<ActionResult> DetailsAsync(int id)
         {
-            var model = await _httpClient.GetFromJsonAsync<Product>($"{_apiAdres}/{id}");
+            var model = await _httpClient.GetFromJsonAsync<Brand>($"{_apiAdres}/{id}");
             return View(model);
         }
 
-        // GET: ProductsController/Create
-        public async Task<ActionResult> CreateAsync()
+        // GET: BrandsController/Create
+        public ActionResult Create()
         {
-            await YukleAsync();
             return View();
         }
 
-        // POST: ProductsController/Create
+        // POST: BrandsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateAsync(Product collection, IFormFile? Image)
+        public async Task<ActionResult> CreateAsync(Brand collection, IFormFile? Logo)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    if (Image is not null)
-                        collection.Image = FileHelper.FileLoader(Image);
+                    if (Logo is not null)
+                        collection.Logo = FileHelper.FileLoader(Logo);
                     var response = await _httpClient.PostAsJsonAsync(_apiAdres, collection);
                     if (response.IsSuccessStatusCode)
                     {
@@ -62,36 +54,27 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
                     ModelState.AddModelError("", "Hata Oluştu!");
                 }
             }
-            await YukleAsync();
             return View(collection);
         }
 
-        // GET: ProductsController/Edit/5
+        // GET: BrandsController/Edit/5
         public async Task<ActionResult> EditAsync(int id)
         {
-            await YukleAsync();
-
-            var model = await _httpClient.GetFromJsonAsync<Product>($"{_apiAdres}/{id}");
+            var model = await _httpClient.GetFromJsonAsync<Brand>($"{_apiAdres}/{id}");
             return View(model);
         }
 
-        // POST: ProductsController/Edit/5
+        // POST: BrandsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditAsync(int id, Product collection, IFormFile? Image, bool resmiSil)
+        public async Task<ActionResult> EditAsync(int id, Brand collection, IFormFile? Logo)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    if (resmiSil == true)
-                    {
-                        if (!string.IsNullOrEmpty(collection.Image))
-                            FileHelper.FileRemover(collection.Image);
-                        collection.Image = string.Empty;
-                    }
-                    if (Image is not null)
-                        collection.Image = FileHelper.FileLoader(Image);
+                    if (Logo is not null)
+                        collection.Logo = FileHelper.FileLoader(Logo);
                     var response = await _httpClient.PutAsJsonAsync(_apiAdres + "/" + id, collection);
                     if (response.IsSuccessStatusCode)
                     {
@@ -104,29 +87,28 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
                     ModelState.AddModelError("", "Hata Oluştu!");
                 }
             }
-            await YukleAsync();
             return View(collection);
         }
 
-        // GET: ProductsController/Delete/5
+        // GET: BrandsController/Delete/5
         public async Task<ActionResult> DeleteAsync(int id)
         {
-            var model = await _httpClient.GetFromJsonAsync<Product>($"{_apiAdres}/{id}");
+            var model = await _httpClient.GetFromJsonAsync<Brand>($"{_apiAdres}/{id}");
             return View(model);
         }
 
-        // POST: ProductsController/Delete/5
+        // POST: BrandsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteAsync(int id, Product collection)
+        public async Task<ActionResult> DeleteAsync(int id, Brand collection)
         {
             try
             {
                 var response = await _httpClient.DeleteAsync($"{_apiAdres}/{id}");
                 if (response.IsSuccessStatusCode)
                 {
-                    if (!string.IsNullOrEmpty(collection.Image))
-                        FileHelper.FileRemover(collection.Image);
+                    if (!string.IsNullOrEmpty(collection.Logo))
+                        FileHelper.FileRemover(collection.Logo);
                     return RedirectToAction(nameof(Index));
                 }
                 ModelState.AddModelError("", "Kayıt Başarısız!");
@@ -136,13 +118,6 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
                 ModelState.AddModelError("", "Hata Oluştu!");
             }
             return View(collection);
-        }
-        async Task YukleAsync()
-        {
-            var kategoriler = await _httpClient.GetFromJsonAsync<List<Category>>(_apiAdres2);
-            ViewBag.CategoryId = new SelectList(kategoriler, "Id", "Name");
-            var markalar = await _httpClient.GetFromJsonAsync<List<Brand>>("http://localhost:5018/Api/brands");
-            ViewBag.BrandId = new SelectList(markalar, "Id", "Name");
         }
     }
 }
