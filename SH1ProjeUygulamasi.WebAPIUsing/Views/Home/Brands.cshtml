@@ -1,0 +1,117 @@
+﻿
+@{
+    ViewData["Title"] = "Marka Yönetimi";
+}
+
+<h1>Marka Yönetimi</h1>
+
+<table class="table table-striped table-hover">
+    <tr>
+        <th>Id</th>
+        <th>Logo</th>
+        <th>Marka Adı</th>
+        <th>Marka Açıklama</th>
+        <th>Eklenme Tarihi</th>
+        <th></th>
+    </tr>
+    <tbody id="list">
+    </tbody>
+</table>
+
+<input type="hidden" name="Id" />
+<input type="hidden" name="CreateDate" />
+<input type="hidden" name="LogoName" id="LogoName" />
+
+<div class="row">
+    <div class="col-md-4">
+        <div>
+
+            <div class="form-group">
+                <label class="control-label" for="Name">Marka Adı</label>
+                <input class="form-control" type="text" data-val="true" data-val-length="The field Marka Adı must be a string with a maximum length of 50." data-val-length-max="50" data-val-required="Marka Adı Boş Geçilemez!" id="Name" maxlength="50" name="Name" value="">
+                <span class="text-danger field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="Description">Marka Açıklama</label>
+                <textarea class="form-control" id="Description" name="Description"></textarea>
+                <span class="text-danger field-validation-valid" data-valmsg-for="Description" data-valmsg-replace="true"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="Logo">Marka Resmi</label>
+                <input class="form-control" type="file" data-val="true" data-val-length="The field Marka Resmi must be a string with a maximum length of 100." data-val-length-max="100" id="Logo" name="Logo">
+                <span class="text-danger field-validation-valid" data-valmsg-for="Logo" data-valmsg-replace="true"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="checkbox" data-val="true" data-val-required="The Durum field is required." id="IsActive" name="IsActive" value="true"> Durum
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="button" value="Ekle" class="btn btn-primary" onclick="Ekle()">
+                <input type="button" value="Güncelle" class="btn btn-success" onclick="Guncelle()">
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var apiUrl = 'http://localhost:5018/Api/';
+        function GetAll() {
+            fetch(apiUrl + 'Brands')
+                .then(response => response.json()) // JSON olarak dönüştür
+                .then(data => {
+                    console.log(data);
+                    let liste = document.getElementById("list");
+                    liste.innerHTML = "";
+                    data.forEach(item => {
+                        liste.innerHTML += `<tr>
+                                <td>${item.id}</td>
+                                <td><img src="/Images/${item.logo}" alt="" height="34" /></td>
+                                <td>${item.name}</td>
+                                <td>${item.description}</td>
+                                <td>${item.createDate}</td>
+                                <td>
+                                <button class="btn btn-primary" onclick="alert('Düzenle')">Düzenle</button>
+                                <button class="btn btn-danger" onclick="alert('Sil')">Sil</button>
+                                </td>
+                            </tr>`;
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        };
+        GetAll();
+        function Ekle() {
+            // file upload
+            const formData = new FormData();
+            const fileField = document.querySelector('input[type="file"]');
+
+            formData.append("formFile", fileField.files[0]);
+
+            fetch(apiUrl + 'Brands/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    Name: document.getElementsByName('Name')[0].value,
+                    Description: document.getElementsByName('Description')[0].value,
+                    Logo: formData.get('formFile').name //document.getElementsByName('Logo')[0].value
+                })
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        //upload(formData);
+                        location.reload()
+                        // return response.json(); // Başarılı ise JSON verisini alın
+                    } else {
+                        throw new Error('İstek başarısız oldu.'); // Hata durumunda hata fırlatın
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        }
+    </script>
+}
