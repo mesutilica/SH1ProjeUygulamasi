@@ -44,6 +44,8 @@ namespace SH1ProjeUygulamasi.WebAPI
 
             app.UseAuthorization();
 
+            app.UseStaticFiles(); // api de statik dosyalarý kullanmak için
+
             app.UseCors("default");
 
             app.MapControllers();

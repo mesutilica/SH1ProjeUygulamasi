@@ -12,6 +12,7 @@
         <th>Marka Adı</th>
         <th>Marka Açıklama</th>
         <th>Eklenme Tarihi</th>
+        <th>Durum</th>
         <th></th>
     </tr>
     <tbody id="list">
@@ -39,6 +40,7 @@
             <div class="form-group">
                 <label class="control-label" for="Logo">Marka Resmi</label>
                 <input class="form-control" type="file" data-val="true" data-val-length="The field Marka Resmi must be a string with a maximum length of 100." data-val-length-max="100" id="Logo" name="Logo">
+                <span id="brandLogo"></span>
                 <span class="text-danger field-validation-valid" data-valmsg-for="Logo" data-valmsg-replace="true"></span>
             </div>
             <div class="form-group form-check">
@@ -47,8 +49,8 @@
                 </label>
             </div>
             <div class="form-group">
-                <input type="button" value="Ekle" class="btn btn-primary" onclick="Ekle()">
-                <input type="button" value="Güncelle" class="btn btn-success" onclick="Guncelle()">
+                <input type="button" value="Ekle" id="btnEkle" class="btn btn-primary" onclick="Ekle()">
+                <input type="button" value="Güncelle" class="btn btn-success" onclick="Guncelle()" id="btnGuncelle" disabled>
             </div>
             
         </div>
@@ -62,7 +64,7 @@
             fetch(apiUrl + 'Brands')
                 .then(response => response.json()) // JSON olarak dönüştür
                 .then(data => {
-                    console.log(data);
+                   // console.log(data);
                     let liste = document.getElementById("list");
                     liste.innerHTML = "";
                     data.forEach(item => {
@@ -72,8 +74,9 @@
                                 <td>${item.name}</td>
                                 <td>${item.description}</td>
                                 <td>${item.createDate}</td>
+                                <td>${item.isActive}</td>
                                 <td>
-                                <button class="btn btn-primary" onclick="alert('Düzenle')">Düzenle</button>
+                                <button class="btn btn-primary" onclick="edit(${item.id})">Düzenle</button>
                                 <button class="btn btn-danger" onclick="alert('Sil')">Sil</button>
                                 </td>
                             </tr>`;
@@ -84,7 +87,26 @@
                 })
         };
         GetAll();
+
+        // file upload
+        async function upload(formData) {
+            try {
+                const response = await fetch(apiUrl + "Upload", {
+                    method: "POST",
+                    body: formData,
+                });
+                const result = await response.json();
+                console.log("Success:", result);
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
         function Ekle() {
+            if (!document.getElementsByName('Name')[0].value) {
+                alert("Marka Adı Boş Geçilemez!");
+                return;
+            }
             // file upload
             const formData = new FormData();
             const fileField = document.querySelector('input[type="file"]');
@@ -97,12 +119,13 @@
                 body: JSON.stringify({
                     Name: document.getElementsByName('Name')[0].value,
                     Description: document.getElementsByName('Description')[0].value,
+                    IsActive: document.querySelector('[name="IsActive"]').checked,
                     Logo: formData.get('formFile').name //document.getElementsByName('Logo')[0].value
                 })
             })
                 .then((response) => {
                     if (response.ok) {
-                        //upload(formData);
+                        upload(formData);
                         location.reload()
                         // return response.json(); // Başarılı ise JSON verisini alın
                     } else {
@@ -112,6 +135,35 @@
                 .catch(error => {
                     console.log(error);
                 })
+        }
+
+        function edit(id) {
+            fetch(apiUrl + "Brands/" + id)
+                .then(response => response.json())
+                .then(item => {
+                     console.log(item);
+                    document.getElementsByName("Id")[0].value = item.id;
+                    document.getElementById("Name").value = item.name;
+                    document.getElementById("Description").value = item.description;
+                    document.getElementById("LogoName").value = item.logo;
+                    document.getElementById("IsActive").checked = item.isActive;
+                    document.getElementById("brandLogo").innerHTML = "<img src='http://localhost:5018/Images/" + item.logo + "' height='50'>";
+                    document.getElementById("btnGuncelle").disabled = false;
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        }
+
+        function Guncelle() {
+            var id = document.getElementsByName("Id")[0].value;
+            var resim = document.getElementById("LogoName").value;
+
+            // file upload
+            const formData = new FormData();
+            const fileField = document.querySelector('input[type="file"]');
+
+            formData.append("formFile", fileField.files[0]);
         }
     </script>
 }
