@@ -52,7 +52,7 @@
                 <input type="button" value="Ekle" id="btnEkle" class="btn btn-primary" onclick="Ekle()">
                 <input type="button" value="Güncelle" class="btn btn-success" onclick="Guncelle()" id="btnGuncelle" disabled>
             </div>
-            
+
         </div>
     </div>
 </div>
@@ -64,22 +64,22 @@
             fetch(apiUrl + 'Brands')
                 .then(response => response.json()) // JSON olarak dönüştür
                 .then(data => {
-                   // console.log(data);
+                    // console.log(data);
                     let liste = document.getElementById("list");
                     liste.innerHTML = "";
                     data.forEach(item => {
                         liste.innerHTML += `<tr>
-                                <td>${item.id}</td>
-                                <td><img src="/Images/${item.logo}" alt="" height="34" /></td>
-                                <td>${item.name}</td>
-                                <td>${item.description}</td>
-                                <td>${item.createDate}</td>
-                                <td>${item.isActive}</td>
-                                <td>
-                                <button class="btn btn-primary" onclick="edit(${item.id})">Düzenle</button>
-                                <button class="btn btn-danger" onclick="alert('Sil')">Sil</button>
-                                </td>
-                            </tr>`;
+                                        <td>${item.id}</td>
+                                        <td><img src="/Images/${item.logo}" alt="" height="34" /></td>
+                                        <td>${item.name}</td>
+                                        <td>${item.description}</td>
+                                        <td>${item.createDate}</td>
+                                        <td>${item.isActive}</td>
+                                        <td>
+                                        <button class="btn btn-primary" onclick="edit(${item.id})">Düzenle</button>
+                                        <button class="btn btn-danger" onclick="Delete(${item.id})">Sil</button>
+                                        </td>
+                                    </tr>`;
                     });
                 })
                 .catch(error => {
@@ -122,26 +122,24 @@
                     IsActive: document.querySelector('[name="IsActive"]').checked,
                     Logo: formData.get('formFile').name //document.getElementsByName('Logo')[0].value
                 })
+            }).then((response) => {
+                if (response.ok) {
+                    upload(formData);
+                    location.reload()
+                    // return response.json(); // Başarılı ise JSON verisini alın
+                } else {
+                    throw new Error('İstek başarısız oldu.'); // Hata durumunda hata fırlatın
+                }
+            }).catch(error => {
+                console.log(error);
             })
-                .then((response) => {
-                    if (response.ok) {
-                        upload(formData);
-                        location.reload()
-                        // return response.json(); // Başarılı ise JSON verisini alın
-                    } else {
-                        throw new Error('İstek başarısız oldu.'); // Hata durumunda hata fırlatın
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                })
         }
 
         function edit(id) {
             fetch(apiUrl + "Brands/" + id)
                 .then(response => response.json())
                 .then(item => {
-                     console.log(item);
+                    console.log(item);
                     document.getElementsByName("Id")[0].value = item.id;
                     document.getElementById("Name").value = item.name;
                     document.getElementById("Description").value = item.description;
@@ -164,6 +162,48 @@
             const fileField = document.querySelector('input[type="file"]');
 
             formData.append("formFile", fileField.files[0]);
+
+            if (fileField.files[0]) {
+                resim = formData.get("formFile").name;
+            }
+
+            fetch(apiUrl + 'Brands/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    Id: parseInt(id),
+                    Name: document.getElementsByName('Name')[0].value,
+                    Description: document.getElementsByName('Description')[0].value,
+                    IsActive: document.querySelector('[name="IsActive"]').checked,
+                    Logo: resim
+                })
+            }).then((response) => {
+                if (response.ok) {
+                    upload(formData);
+                    location.reload()
+                    // return response.json(); // Başarılı ise JSON verisini alın
+                } else {
+                    throw new Error('İstek başarısız oldu.'); // Hata durumunda hata fırlatın
+                }
+            }).catch(error => {
+                console.log(error);
+            })
+        }
+
+        function Delete(id) {
+            if (confirm('Kaydı silmek istediğinize emin misiniz?')) {
+                fetch(apiUrl + 'brands/' + id, {
+                    method: 'DELETE'
+                }).then((response) => {
+                    if (response.ok) {
+                        location.reload()
+                    } else {
+                        throw new Error('İstek başarısız oldu.'); // Hata durumunda hata fırlatın
+                    }
+                }).catch(error => {
+                    console.log(error);
+                })
+            }
         }
     </script>
 }
