@@ -1,12 +1,12 @@
 ﻿
 @{
-    ViewData["Title"] = "Javascript FetchApi ile Ürün CRUD İşlemleri";
+    ViewData["Title"] = "Jquery Ajax ile Ürün CRUD İşlemleri";
 }
 
 <h1>@ViewBag.Title</h1>
 
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+<button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#urunFormu">
     Yeni Ekle
 </button>
 
@@ -29,7 +29,7 @@
 <input type="hidden" id="ImageName" />
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="urunFormu" tabindex="-1" aria-labelledby="urunFormuLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -53,6 +53,7 @@
                             <div class="form-group">
                                 <label class="control-label" for="Image">Ürün Resmi</label>
                                 <input class="form-control" type="file" data-val="true" data-val-length="The field Ürün Resmi must be a string with a maximum length of 100." data-val-length-max="100" id="Image" name="Image">
+                                <div id="resim"></div>
                                 <span class="text-danger field-validation-valid" data-valmsg-for="Image" data-valmsg-replace="true"></span>
                             </div>
                             <div class="form-group form-check">
@@ -101,37 +102,31 @@
     </div>
 </div>
 
-
-
 @section scripts{
     <script>
         var apiUrl = 'http://localhost:5018/Api/';
         function GetAll() {
-            fetch(apiUrl + 'Products')
-                .then(response => response.json()) // JSON olarak dönüştür
-                .then(data => {
-                    // console.log(data);
-                    let liste = document.getElementById("products");
-                    liste.innerHTML = "";
-                    data.forEach(item => {
-                        liste.innerHTML += `<tr>
-                                        <td>${item.id}</td>
-                                        <td><img src="http://localhost:5018/Images/${item.image}" alt="" height="34" /></td>
-                                        <td>${item.name}</td>
-                                        <td>${item.price}</td>
-                                        <td>${item.stock}</td>
-                                        <td>${item.createDate}</td>
-                                        <td>${item.isActive}</td>
-                                        <td>
-                                        <button class="btn btn-primary" onclick="edit(${item.id})">Düzenle</button>
-                                        <button class="btn btn-danger" onclick="Delete(${item.id})">Sil</button>
-                                        </td>
-                                    </tr>`;
-                    });
-                })
-                .catch(error => {
-                    console.log(error);
-                })
+            $.get(apiUrl + 'Products', function (data) {
+                // console.log(data);
+                let liste = $("#products");
+                console.log("liste", liste);
+                liste.innerHTML = "";
+                data.forEach(item => {
+                    liste.append(`<tr>
+                    <td>${item.id}</td>
+                    <td><img src="http://localhost:5018/Images/${item.image}" alt="" height="34" /></td>
+                    <td>${item.name}</td>
+                    <td>${item.price}</td>
+                    <td>${item.stock}</td>
+                    <td>${item.createDate}</td>
+                    <td>${item.isActive}</td>
+                    <td>
+                    <button class="btn btn-primary" onclick="edit(${item.id})" data-bs-toggle="modal" data-bs-target="#urunFormu">Düzenle</button>
+                    <button class="btn btn-danger" onclick="Delete(${item.id})">Sil</button>
+                    </td>
+                </tr>`);
+                });
+            });
         };
         GetAll();
         GetCategories();
@@ -139,38 +134,25 @@
 
         // kategoriler
         function GetCategories() {
-            fetch(apiUrl + 'categories')
-                .then(response => response.json()) // JSON olarak dönüştür
-                .then(data => {
-                    // console.log(data);
-                    let liste = document.getElementById("CategoryId");
-                    data.forEach(item => {
-                        let option = new Option(item.name, item.id);
-                        liste.add(option);
-                    });
-                })
-                .catch(error => {
-                    console.log(error);
-                })
+            $.get(apiUrl + 'categories', function (data) {
+                let liste = $("#CategoryId");
+                data.forEach(item => {
+                    let option = new Option(item.name, item.id);
+                    liste.append(option);
+                });
+            });
         };
 
         // markalar
         function GetBrands() {
-            fetch(apiUrl + 'brands')
-                .then(response => response.json()) // JSON olarak dönüştür
-                .then(data => {
-                    // console.log(data);
-                    let liste = document.getElementById("BrandId");
-                    data.forEach(item => {
-                        let option = new Option(item.name, item.id);
-                        liste.add(option);
-                    });
-                })
-                .catch(error => {
-                    console.log(error);
-                })
+            $.get(apiUrl + 'brands', function (data) {
+                let liste = $("#BrandId");
+                data.forEach(item => {
+                    let option = new Option(item.name, item.id);
+                    liste.append(option);
+                });
+            });
         };
-
 
         // file upload
         async function upload(formData) {
@@ -205,6 +187,23 @@
 
             formData.append("formFile", fileField.files[0]);
 
+            $.ajax({
+                method: 'POST',
+                url: apiUrl + 'Products/',
+                headers: { 'Content-Type': 'application/json' },
+                data: JSON.stringify({
+                    Name: document.getElementsByName('Name')[0].value,
+                    Description: document.getElementsByName('Description')[0].value,
+                    Price: document.getElementById('Price').value,
+                    Stock: document.getElementById('Stock').value,
+                    IsHome: document.getElementById('IsHome').checked,
+                    IsActive: document.querySelector('[name="IsActive"]').checked,
+                    Image: formData.get('formFile').name,
+                    CategoryId: document.getElementById('CategoryId').value,
+                    BrandId: document.getElementById('BrandId').value
+                })
+            });
+
             fetch(apiUrl + 'Products/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -230,6 +229,99 @@
             }).catch(error => {
                 console.log(error);
             })
+        }
+
+        function edit(id) {
+            fetch(apiUrl + "Products/" + id)
+                .then(response => response.json())
+                .then(item => {
+                    console.log(item);
+                    document.getElementById("Id").value = item.id;
+                    document.getElementById("Name").value = item.name;
+                    document.getElementById("Description").value = item.description;
+                    document.getElementById("Stock").value = item.stock;
+                    document.getElementById("Price").value = item.price;
+                    document.getElementById("CategoryId").value = item.categoryId;
+                    document.getElementById("BrandId").value = item.brandId;
+                    document.getElementById("ImageName").value = item.image;
+                    document.getElementById("IsActive").checked = item.isActive;
+                    document.getElementById("IsHome").checked = item.isHome;
+                    document.getElementById("resim").innerHTML = "<img src='http://localhost:5018/Images/" + item.image + "' height='50'>";
+                    document.getElementById("btnGuncelle").disabled = false;
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        }
+
+        function Guncelle() {
+            var id = document.getElementById("Id").value;
+            var resim = document.getElementById("ImageName").value;
+
+            if (!document.getElementsByName('Name')[0].value) {
+                alert("Ürün Adı Boş Geçilemez!");
+                return;
+            }
+            if (!document.getElementById('Stock').value) {
+                alert("Stok Boş Geçilemez!");
+                return;
+            }
+            if (!document.getElementById('Price').value) {
+                alert("Fiyat Boş Geçilemez!");
+                return;
+            }
+            // file upload
+            const formData = new FormData();
+            const fileField = document.querySelector('input[type="file"]');
+
+            formData.append("formFile", fileField.files[0]);
+
+            if (fileField.files[0]) {
+                resim = formData.get("formFile").name
+            }
+
+            fetch(apiUrl + 'Products/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    Id: parseInt(id),
+                    Name: document.getElementsByName('Name')[0].value,
+                    Description: document.getElementsByName('Description')[0].value,
+                    Price: document.getElementById('Price').value,
+                    Stock: document.getElementById('Stock').value,
+                    IsHome: document.getElementById('IsHome').checked,
+                    IsActive: document.querySelector('[name="IsActive"]').checked,
+                    Image: resim,
+                    CategoryId: document.getElementById('CategoryId').value,
+                    BrandId: document.getElementById('BrandId').value
+                })
+            }).then((response) => {
+                if (response.ok) {
+                    upload(formData);
+                    location.reload()
+                    // return response.json(); // Başarılı ise JSON verisini alın
+                } else {
+                    throw new Error('İstek başarısız oldu.'); // Hata durumunda hata fırlatın
+                }
+            }).catch(error => {
+                console.log(error);
+            })
+        }
+
+        function Delete(id) {
+            if (confirm('Kaydı silmek istediğinize emin misiniz?')) {
+                fetch(apiUrl + 'Products/' + id, {
+                    method: 'DELETE'
+                }).then((response) => {
+                    if (response.ok) {
+                        location.reload()
+                    } else {
+                        throw new Error('İstek başarısız oldu.'); // Hata durumunda hata fırlatın
+                    }
+                }).catch(error => {
+                    console.log(error);
+                })
+            }
         }
     </script>
 }

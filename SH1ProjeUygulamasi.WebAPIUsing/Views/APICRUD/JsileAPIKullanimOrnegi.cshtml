@@ -16,7 +16,7 @@
                 let div = document.getElementById('products'); // Ekrandaki div elementini seç
                 // Ürünleri div içine yazdır. ` eğik tırnak için klavyeden altgr + virgül + boşluk tuşuna bas
                 data.products.forEach(product => {
-                    div.innerHTML += `<div><a href="/Home/Detail/${product.id}"><img src="${product.thumbnail}" alt="" class="img-fluid" /></a><h5>${product.title} - ${product.price} ₺</h5></div>`;
+                    div.innerHTML += `<div><a href="/APICRUD/Detail/${product.id}"><img src="${product.thumbnail}" alt="" class="img-fluid" /></a><h5>${product.title} - ${product.price} ₺</h5></div>`;
                 });
             })
             .catch(error => {

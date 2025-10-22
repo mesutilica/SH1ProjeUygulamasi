@@ -12,15 +12,19 @@
                         <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Anasayfa</a>
                     </li>
                     @await Component.InvokeAsync("Kategori")
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Home" asp-action="JsileAPIKullanimOrnegi">Js API</a>
+                    <li class="dropdown">
+                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            JS API İşlemleri
+                        </a>
+
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/APICRUD/JsileAPIKullanimOrnegi">Js API</a></li>
+                            <li><a class="dropdown-item" href="/APICRUD/Brands">Marka Yönetimi</a></li>
+                            <li><a class="dropdown-item" href="/APICRUD/FetchCrud">Js Ürün Yönetimi</a></li>
+                            <li><a class="dropdown-item" href="/APICRUD/JqueryCrud">Jquery Ürün Yönetimi</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Brands">Marka Yönetimi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Products" asp-action="FetchCrud">Js Ürün Yönetimi</a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-controller="Home" asp-action="ContactUs">İletişim</a>
                     </li>
