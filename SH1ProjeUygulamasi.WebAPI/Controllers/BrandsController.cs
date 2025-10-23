@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SH1ProjeUygulamasi.Core.Entities;
 using SH1ProjeUygulamasi.Data;
@@ -7,6 +8,7 @@ namespace SH1ProjeUygulamasi.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BrandsController : ControllerBase
     {
         private readonly DatabaseContext _context;

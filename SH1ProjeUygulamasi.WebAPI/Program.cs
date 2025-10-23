@@ -1,7 +1,9 @@
-
+using Microsoft.AspNetCore.Authentication.JwtBearer; // jwt token güvenlik kütüphanesi
+using Microsoft.IdentityModel.Tokens;
 using SH1ProjeUygulamasi.Data;
 using SH1ProjeUygulamasi.Service.Abstract;
 using SH1ProjeUygulamasi.Service.Concrete;
+using System.Text;
 
 namespace SH1ProjeUygulamasi.WebAPI
 {
@@ -16,6 +18,23 @@ namespace SH1ProjeUygulamasi.WebAPI
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+            {
+                
+                opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                {
+                    // validasyon yapmak istediðimiz alanlar:
+                    ValidateAudience = true, // kitleyi doðrula
+                    ValidateIssuer = true, // token vereni doðrula
+                    ValidateLifetime = true, // token yaþam süresini doðrula
+                    ValidateIssuerSigningKey = true, // token verenin imzalama anahtarýný doðrula
+                    ValidIssuer = builder.Configuration["Token:Issuer"], // token veren saðlayýcýyý appsettings.json dan çek
+                    ValidAudience = builder.Configuration["Token:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
+                    ClockSkew = TimeSpan.Zero // saat farký olmasýn
+                };
+            });
 
             builder.Services.AddDbContext<DatabaseContext>();
 
