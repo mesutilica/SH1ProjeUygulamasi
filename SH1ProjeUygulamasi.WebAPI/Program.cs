@@ -61,7 +61,8 @@ namespace SH1ProjeUygulamasi.WebAPI
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseAuthentication(); // önce oturum açma
+            app.UseAuthorization(); // sonra yetkilendirme
 
             app.UseStaticFiles(); // api de statik dosyalarý kullanmak için
 
