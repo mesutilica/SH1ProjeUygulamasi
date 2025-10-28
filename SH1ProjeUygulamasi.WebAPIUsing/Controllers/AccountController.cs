@@ -33,6 +33,8 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Controllers
                 var sonuc = await _httpClient.PostAsJsonAsync(_apiAdres + "Login", userLoginModel);
                 if (sonuc.IsSuccessStatusCode)
                 {
+                    /*
+                     // ilk login
                     var kullanici = await sonuc.Content.ReadFromJsonAsync<User>();
 
                     var haklar = new List<Claim>() // kullanıcı hakları tanımladık
@@ -43,8 +45,27 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Controllers
                     var kullaniciKimligi = new ClaimsIdentity(haklar, "Login");
                     ClaimsPrincipal claimsPrincipal = new(kullaniciKimligi);
                     await HttpContext.SignInAsync(claimsPrincipal);
+                    */
+                    Token jwt = await sonuc.Content.ReadFromJsonAsync<Token>();
+                    if (jwt is not null)
+                    {
+                        HttpContext.Session.SetString("userToken", jwt.AccessToken);
+                        HttpContext.Session.SetString("refreshToken", jwt.RefreshToken);
 
-                    return RedirectToAction("Index", "Home");
+                        var haklar = new List<Claim>() // kullanıcı hakları tanımladık
+                        {
+                            new(ClaimTypes.UserData, jwt.RefreshToken)
+                        };
+                        var kullaniciKimligi = new ClaimsIdentity(haklar, "Login");
+                        ClaimsPrincipal claimsPrincipal = new(kullaniciKimligi);
+                        await HttpContext.SignInAsync(claimsPrincipal);
+
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Giriş Başarısız!");
+                    }
                 }
                 else
                 {

@@ -1,0 +1,79 @@
+﻿@model UserLoginModel
+@{
+    ViewData["Title"] = "Js Giriş Ekranı";
+}
+
+<style>
+    html,
+    body { height: 100%; }
+
+    .form-signin { max-width: 330px; padding: 1rem; }
+
+    .form-signin .form-floating:focus-within { z-index: 2; }
+
+    .form-signin input[type="email"] { margin-bottom: -1px; border-bottom-right-radius: 0; border-bottom-left-radius: 0; }
+
+    .form-signin input[type="password"] { margin-bottom: 10px; border-top-left-radius: 0; border-top-right-radius: 0; }
+</style>
+
+<main class="d-flex align-items-center py-4 bg-body-tertiary">
+    <div class="form-signin col-lg-4 m-auto">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <h1 class="h3 mb-3 fw-normal">Js Giriş Ekranı</h1>
+        <div class="form-floating">
+            <input class="form-control" required asp-for="Email" placeholder="">
+            <label asp-for="Email">Email</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" asp-for="Password" class="form-control" required placeholder="">
+            <label asp-for="Password">Şifre</label>
+        </div>
+        <div class="form-check text-start my-3">
+            <input class="form-check-input" type="checkbox" name="rememberme" value="remember-me" id="checkDefault">
+            <label class="form-check-label" for="checkDefault">
+                Beni Hatırla
+            </label>
+        </div>
+        <button class="btn btn-primary w-100 py-2" type="button" onclick="Login()">Giriş Yap</button>
+    </div>
+</main>
+
+@section Scripts{
+    <script>
+        function Login() {
+            if (!document.getElementById("Email").value) {
+                alert("Email boş geçilemez!");
+                return false;
+            }
+            if (!document.getElementById("Password").value) {
+                alert("Şifre boş geçilemez!");
+                return false;
+            }
+            var UserLoginModel = {
+                Email: document.getElementById("Email").value,
+                Password: document.getElementById("Password").value
+            }
+            console.warn(UserLoginModel);
+            console.warn(JSON.stringify(UserLoginModel));
+            $.ajax({
+                method: 'POST',
+                url: 'http://localhost:5018/api/Auth/Login',
+                headers: { 'Content-Type': 'application/json' },
+                data: JSON.stringify(UserLoginModel),
+                success: function (data) {
+                    // console.log(data);
+                    localStorage.setItem("token", data.accessToken)
+                    sessionStorage.refreshToken = data.refreshToken;
+                    sessionStorage["userExpiration"] = data.expiration;
+
+                    location.href = "/APICRUD/Brands"
+                },
+                error: function (xhr, textStatus, error) {
+                    console.log("xhr: ", xhr.statusText);
+                    console.warn("textStatus: ", textStatus);
+                    console.warn("error: ", error);
+                }
+            });
+        }
+    </script>
+}

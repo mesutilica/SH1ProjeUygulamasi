@@ -60,8 +60,19 @@
 @section scripts{
     <script>
         var apiUrl = 'http://localhost:5018/Api/';
+
+        var token = localStorage.getItem("token");
+        var refreshToken = sessionStorage.refreshToken;
+        var userExpiration = sessionStorage["userExpiration"];
+
         function GetAll() {
-            fetch(apiUrl + 'Brands')
+            fetch(apiUrl + 'Brands', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            })
                 .then(response => response.json()) // JSON olarak dönüştür
                 .then(data => {
                     // console.log(data);
