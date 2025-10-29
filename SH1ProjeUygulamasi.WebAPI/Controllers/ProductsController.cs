@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SH1ProjeUygulamasi.Core.Entities;
 using SH1ProjeUygulamasi.Service.Abstract;
 
@@ -6,6 +7,7 @@ namespace SH1ProjeUygulamasi.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductsController : ControllerBase
     {
         private readonly IService<Product> _service;
@@ -16,32 +18,32 @@ namespace SH1ProjeUygulamasi.WebAPI.Controllers
         }
 
         // GET: api/<ProductsController>
-        [HttpGet]
+        [HttpGet, AllowAnonymous]
         public async Task<IEnumerable<Product>> Get()
         {
             return await _service.GetAllAsync();
         }
 
-        [HttpGet("GetHomePageProducts")]
+        [HttpGet("GetHomePageProducts"), AllowAnonymous]
         public async Task<IEnumerable<Product>> GetHomePageProducts()
         {
             return await _service.GetAllAsync(p => p.IsActive && p.IsHome);
         }
 
-        [HttpGet("GetProductsByCategoryId/{id}")]
+        [HttpGet("GetProductsByCategoryId/{id}"), AllowAnonymous]
         public async Task<IEnumerable<Product>> GetProductsByCategoryId(int id)
         {
             return await _service.GetAllAsync(p => p.IsActive && p.CategoryId == id);
         }
 
-        [HttpGet("GetProductsBySearch/{id?}")]
+        [HttpGet("GetProductsBySearch/{id?}"), AllowAnonymous]
         public async Task<IEnumerable<Product>> GetProductsBySearch(string id = "")
         {
             return await _service.GetAllAsync(p => p.IsActive && p.Name.Contains(id));
         }
 
         // GET api/<ProductsController>/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), AllowAnonymous]
         public async Task<Product> GetAsync(int id)
         {
             return await _service.FindAsync(id);

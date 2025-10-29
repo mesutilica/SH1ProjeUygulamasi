@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SH1ProjeUygulamasi.Core.Entities;
 using SH1ProjeUygulamasi.Service.Abstract;
 
@@ -8,6 +9,7 @@ namespace SH1ProjeUygulamasi.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CategoriesController : ControllerBase
     {
         private readonly IService<Category> _categoryService;
@@ -18,14 +20,14 @@ namespace SH1ProjeUygulamasi.WebAPI.Controllers
         }
 
         // GET: api/<CategoriesController>
-        [HttpGet]
+        [HttpGet, AllowAnonymous]
         public IEnumerable<Category> Get()
         {
             return _categoryService.GetAll();
         }
 
         // GET api/<CategoriesController>/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), AllowAnonymous]
         public Category Get(int id)
         {
             return _categoryService.Find(id);

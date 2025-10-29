@@ -11,9 +11,17 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
     {
         static string _apiAdres = "http://localhost:5018/Api/Brands";
         HttpClient _httpClient = new HttpClient();
+        void SetHeader()
+        {
+            if (HttpContext.Session.GetString("userToken") is not null)
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("userToken"));
+            }
+        }
         // GET: BrandsController
         public async Task<ActionResult> Index()
         {
+            SetHeader();
             var model = await _httpClient.GetFromJsonAsync<List<Brand>>(_apiAdres);
             return View(model);
         }
@@ -21,6 +29,7 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
         // GET: BrandsController/Details/5
         public async Task<ActionResult> DetailsAsync(int id)
         {
+            SetHeader();
             var model = await _httpClient.GetFromJsonAsync<Brand>($"{_apiAdres}/{id}");
             return View(model);
         }
@@ -40,6 +49,7 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
             {
                 try
                 {
+                    SetHeader();
                     if (Logo is not null)
                         collection.Logo = FileHelper.FileLoader(Logo);
                     var response = await _httpClient.PostAsJsonAsync(_apiAdres, collection);
@@ -60,6 +70,7 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
         // GET: BrandsController/Edit/5
         public async Task<ActionResult> EditAsync(int id)
         {
+            SetHeader();
             var model = await _httpClient.GetFromJsonAsync<Brand>($"{_apiAdres}/{id}");
             return View(model);
         }
@@ -73,6 +84,7 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
             {
                 try
                 {
+                    SetHeader();
                     if (Logo is not null)
                         collection.Logo = FileHelper.FileLoader(Logo);
                     var response = await _httpClient.PutAsJsonAsync(_apiAdres + "/" + id, collection);
@@ -93,6 +105,7 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
         // GET: BrandsController/Delete/5
         public async Task<ActionResult> DeleteAsync(int id)
         {
+            SetHeader();
             var model = await _httpClient.GetFromJsonAsync<Brand>($"{_apiAdres}/{id}");
             return View(model);
         }
@@ -104,6 +117,7 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Areas.Admin.Controllers
         {
             try
             {
+                SetHeader();
                 var response = await _httpClient.DeleteAsync($"{_apiAdres}/{id}");
                 if (response.IsSuccessStatusCode)
                 {

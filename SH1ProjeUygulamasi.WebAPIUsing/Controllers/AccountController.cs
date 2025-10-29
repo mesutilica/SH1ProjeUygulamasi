@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SH1ProjeUygulamasi.Core.Entities;
 using SH1ProjeUygulamasi.Core.Models;
@@ -17,9 +18,41 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Controllers
         }
 
         static string _apiAdres = "http://localhost:5018/Api/Auth/";
-        public IActionResult Index()
+        [Authorize]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var id = HttpContext.Session.GetString("refreshToken"); // ilk önce session dan kullanıcı bilgisi alıyoruz
+            if (id is null) // session boşsa
+            {
+                id = User.FindFirst(ClaimTypes.UserData)?.Value; // giriş yapan kullanıcısından alıyoruz
+            }
+            var model = await _httpClient.GetFromJsonAsync<User>($"{_apiAdres}GetUserByUserGuid/{id}");
+            if (model == null)
+            {
+                return NotFound("Kullanıcı Bulunamadı!");
+            }
+            return View(model);
+        }
+        [HttpPost, Authorize]
+        public async Task<IActionResult> Index(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var response = await _httpClient.PutAsJsonAsync("http://localhost:5018/Api/Users/" + user.Id, user);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                    ModelState.AddModelError("", "Kayıt Başarısız!");
+                }
+                catch
+                {
+                    ModelState.AddModelError("", "Hata Oluştu!");
+                }
+            }
+            return View(user);
         }
         public IActionResult Login()
         {
@@ -54,7 +87,8 @@ namespace SH1ProjeUygulamasi.WebAPIUsing.Controllers
 
                         var haklar = new List<Claim>() // kullanıcı hakları tanımladık
                         {
-                            new(ClaimTypes.UserData, jwt.RefreshToken)
+                            new(ClaimTypes.UserData, jwt.RefreshToken),
+                            new(ClaimTypes.Role, jwt.IsAdmin ? "Admin" : "User")
                         };
                         var kullaniciKimligi = new ClaimsIdentity(haklar, "Login");
                         ClaimsPrincipal claimsPrincipal = new(kullaniciKimligi);

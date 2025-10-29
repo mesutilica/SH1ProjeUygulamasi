@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SH1ProjeUygulamasi.Core.Entities;
 using SH1ProjeUygulamasi.Service.Abstract;
 
@@ -6,6 +7,7 @@ namespace SH1ProjeUygulamasi.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SlidersController : ControllerBase
     {
         private readonly IService<Slider> _service;
@@ -16,14 +18,14 @@ namespace SH1ProjeUygulamasi.WebAPI.Controllers
         }
 
         // GET: api/<SlidersController>
-        [HttpGet]
+        [HttpGet, AllowAnonymous]
         public async Task<IEnumerable<Slider>> Get()
         {
             return await _service.GetAllAsync();
         }
 
         // GET api/<SlidersController>/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), AllowAnonymous]
         public async Task<ActionResult<Slider>> GetAsync(int id)
         {
             var model = await _service.FindAsync(id);

@@ -71,6 +71,8 @@ namespace SH1ProjeUygulamasi.WebAPI.Controllers
             //Refresh Token üretiyoruz.
             tokenInstance.RefreshToken = Guid.NewGuid().ToString();
 
+            tokenInstance.IsAdmin = account.IsAdmin;
+
             //Refresh token Users tablosuna işleniyor.
             account.RefreshToken = tokenInstance.RefreshToken;
             account.RefreshTokenExpireDate = tokenInstance.Expiration.AddMinutes(30);
@@ -94,7 +96,7 @@ namespace SH1ProjeUygulamasi.WebAPI.Controllers
             return Ok(user);
         }
 
-        [HttpGet("GetUserByUserGuid/{id}"), Authorize]
+        [HttpGet("GetUserByUserGuid/{id}")]
         public async Task<ActionResult<User>> GetUserByUserGuid(string id)
         {
             if (_context.Users == null)
