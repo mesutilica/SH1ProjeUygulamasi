@@ -14,7 +14,10 @@ namespace SH1ProjeUygulamasi.Data
         public DbSet<User> Users { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            // Lokalde çalışırken
             optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB; database=SH1ProjeUygulamasi; integrated security=true; TrustServerCertificate=True;").ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+            // Canlıya alırken
+            // optionsBuilder.UseSqlServer(@"Server=hostinginverdigiIp; database=SH1ProjeUygulamasi; username=canlikullaniciadi; password=canliDbSifresi; TrustServerCertificate=True;").ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

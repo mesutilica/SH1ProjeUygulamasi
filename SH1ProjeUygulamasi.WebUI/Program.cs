@@ -71,3 +71,11 @@ namespace SH1ProjeUygulamasi.WebUI
         }
     }
 }
+/*
+ * Uygulama çýktýsý almak için;
+ * web uygulama projesine sað týk > açýlan menüden publish > açýlan pencerden yapýlandýrma ayarlarýný yaptýk (bu ayarlar 1 kere yapýlýr, sonradan ayarlarý istersek deðiþtirebiliriz!)
+ * yapýlandýrmadan sonra pencereyi ok ile kapatýp Publish butonuna basarak uygulama çýktýsý alýyoruz.
+ * Sonraki geliþtirmelerde yine sað týk publish deyip sadece çýktý oluþturuyoruz.
+ * Her çýktýda eski dosyalarýn üzerine yazýlarak çýktý projesi güncellenir.
+ * Uygulama çýktýsýný almýþ olduðumuz hosting sunucusuna yüklüyoruz.
+ * */
